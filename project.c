@@ -12,7 +12,7 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
-    return 0;
+
 }
 
 
@@ -110,7 +110,7 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 /* 15 Points */
 int instruction_decode(unsigned op,struct_controls *controls)
 {
-    return 0;
+
 }
 
 /* Read Register */
@@ -132,14 +132,14 @@ void sign_extend(unsigned offset,unsigned *extended_value)
 /* 10 Points */
 int ALU_operations(unsigned data1,unsigned data2,unsigned extended_value,unsigned funct,char ALUOp,char ALUSrc,unsigned *ALUresult,char *Zero)
 {
-    return 0;
+
 }
 
 /* Read / Write Memory */
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
-    return 0;
+
 }
 
 
