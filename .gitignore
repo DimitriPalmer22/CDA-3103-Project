@@ -54,3 +54,9 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Ignore the CMakeLists.txt file
+CMakeLists.txt
+
+# Ignore the cmake build debug directory
+cmake-build-debug/
