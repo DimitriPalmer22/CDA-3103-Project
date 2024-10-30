@@ -12,7 +12,23 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
-
+    // Check word alignment
+    if (PC%4 == 0)
+    {
+        // Shift 
+        unsigned tmp = PC >> 2;
+        // Check if Mem contains a value
+        if (Mem[tmp] == NULL)
+        {
+            return 1;
+        }
+        *instruction = Mem[tmp];
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
 }
 
 
