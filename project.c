@@ -3,9 +3,57 @@
 
 /* ALU */
 /* 10 Points */
-void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero)
-{
-
+void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero) {
+	/*
+		Christopher and Isabel
+		A and B are in 2s complement unless specified as unsigned
+		ALUControl is represented with chars '0' - '7'
+	*/
+	
+	//use to ensure carry out bit is ignored
+	const unsigned int bitMask32 = 0b11111111111111111111111111111111;
+	
+	switch(ALUControl) {
+		case '0': //add
+			*ALUresult = A + B;
+			*ALUresult = *ALUresult & bitMask32;
+			break;
+		case '1': //subtract
+			if(B != 0)
+				B = ~B + 1;
+			*ALUresult = A + B;
+			*ALUresult = *ALUresult & bitMask32;
+			break;
+		case '2': //(A < B)?
+			if(A >> 31 == 1 && B >> 31 == 0) //A is -, B is +
+				ALUresult = 1;
+			else if(A >> 31 == 0 && B >> 31 == 1) //A is +, B is -
+				ALUresult = 0;
+			else if(A >> 31 == 1 && B >> 31 == 1) //A is -, B is -
+				//if A has a greater magnitude then it's smaller
+				ALUresult = A > B;
+			else //A is +, B is +
+				//if A has a smaller magnitude then it's smaller
+				ALUresult = A < B;
+			break;
+		case '3': //(A < B)? (A and B are unsigned integers)
+			*ALUresult = A < B;
+			break;
+		case '4': //(A AND B)
+			*ALUresult = A & B;
+			break;
+		case '5': //(A OR B)
+			*ALUresult = A | B;
+			break;
+		case '6': //(Shift B left by 16 bits)
+			*ALUresult = B << 16;
+			break;
+		case '7': //(NOT A)
+			*ALUresult = ~A;
+			break;
+	}
+	
+    *ALUresult == 0 ? (*Zero = '1') : (*Zero = '0'); //set Zero flag to appropriate value
 }
 
 /* instruction fetch */
