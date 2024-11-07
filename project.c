@@ -194,7 +194,25 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
 /* 10 Points */
 void sign_extend(unsigned offset,unsigned *extended_value)
 {
+    //bit masks
+    const unsigned int bitMask32 = 0b11111111111111111111111111111111;
 
+    if(offset >> 15 == 0) { //if positive
+        //fill with zeros
+        offset = offset & bitMask32;
+    } else { //if negative
+        //flip to positive
+        offset = ~offset + 1;
+
+        //fill with ones
+        offset = offset & bitMask32;
+
+        //flip back to negative
+        offset = ~offset + 1;
+    }
+
+    //set extended value
+    *extended_value = offset;
 }
 
 /* ALU operations */
