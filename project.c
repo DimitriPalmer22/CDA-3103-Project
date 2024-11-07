@@ -181,6 +181,10 @@ int instruction_decode(unsigned op,struct_controls *controls)
 /* 5 Points */
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
+    /*
+        Index into Reg at r1 and r2 and write the read 
+        values into data 1 and data 2 respectively.
+    */
     Reg[r1] = *data1;
     Reg[r2] = *data2;
 }
