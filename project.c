@@ -9,10 +9,10 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero) {
 		A and B are in 2s complement unless specified as unsigned
 		ALUControl is represented with chars '0' - '7'
 	*/
-	
+
 	//use to ensure carry out bit is ignored
 	const unsigned int bitMask32 = 0b11111111111111111111111111111111;
-	
+
 	switch(ALUControl) {
 		case '0': //add
 			*ALUresult = A + B;
@@ -52,7 +52,7 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero) {
 			*ALUresult = ~A;
 			break;
 	}
-	
+
     *ALUresult == 0 ? (*Zero = '1') : (*Zero = '0'); //set Zero flag to appropriate value
 }
 
@@ -63,7 +63,7 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
     // Check word alignment
     if (PC%4 == 0)
     {
-        // Shift 
+        // Shift
         unsigned tmp = PC >> 2;
         // Check if Mem contains a value
         if (Mem[tmp] == NULL)
@@ -100,6 +100,9 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
     // Shift the instruction over to only get the last 6 bits & use the mask to get the bits
     *op = (instruction >> 26) & bitMask6;
 
+	// TODO: Delete
+	printf("I got the op code %d!\n", *op);
+
     // TODO: Delete
     printf("INSTRUCTION: %d. OP: %d\n", instruction, *op);
 
@@ -125,7 +128,7 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
         *funct = (instruction >> 0) & bitMask6;
 
         // TODO: Delete
-        printf("### INSTRUCTION: %d %d %d %d __ %d", *op, *r1, *r2, *r3, *funct);
+        printf("### INSTRUCTION: %d %d %d %d __ %d\n", *op, *r1, *r2, *r3, *funct);
 
     }
 
@@ -138,7 +141,7 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
         *jsec = (instruction >> 0) & bitMask6;
 
         // TODO: Delete
-        printf("### INSTRUCTION: %d %d", *op, *jsec);
+        printf("### INSTRUCTION: %d %d\n", *op, *jsec);
     }
 
     // The other function types are coprocessor functions, which start with 0100xx
@@ -164,7 +167,7 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
         *offset = (instruction >> 0) & bitMask16;
 
         // TODO: Delete
-        printf("### INSTRUCTION: %d %d %d %d", *op, *r1, *r2, *offset);
+        printf("### INSTRUCTION: %d %d %d %d\n", *op, *r1, *r2, *offset);
     }
 }
 
@@ -174,7 +177,121 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 /* 15 Points */
 int instruction_decode(unsigned op,struct_controls *controls)
 {
+    printf("DECODE FUNCTION: %d\n", op);
 
+	// Set all controls to 0 by default, so I don't have to set everything later
+	controls->RegDst = 0;
+	controls->ALUSrc = 0;
+	controls->MemtoReg = 0;
+	controls->RegWrite = 0;
+	controls->MemRead = 0;
+	controls->MemWrite = 0;
+	controls->Branch = 0;
+	controls->Jump = 0;
+	controls->ALUOp = 0;
+
+    switch (op)
+    {
+    // R-Format instruction
+    // add
+    // sub
+    // and
+    // or
+    // slt
+    // sltu
+    case 0b000000:
+        printf("DECODE: R-Type!\n");
+
+        controls->RegDst = 1;
+        controls->RegWrite = 1;
+    	controls->ALUOp = 0b111;
+		break;
+
+    // LW
+    case 0b100011:
+        printf("DECODE: LW!\n");
+
+        controls->ALUSrc = 1;
+        controls->MemtoReg = 1;
+        controls->RegWrite = 1;
+        controls->MemRead = 1;
+    	controls->ALUOp = 0b000;
+		break;
+
+    // SW
+    case 0b101011:
+        printf("DECODE: SW!\n");
+
+        controls->RegDst = 2;
+        controls->ALUSrc = 1;
+        controls->MemtoReg = 2;
+        controls->MemWrite = 1;
+    	controls->ALUOp = 0b000;
+        break;
+
+    // BEQ
+    case 0b000100:
+        printf("DECODE: BEQ!\n");
+
+        controls->RegDst = 2;
+        controls->MemtoReg = 2;
+        controls->Branch = 1;
+    	controls->ALUOp = 0b001;
+    	break;
+
+    // addi
+	case 0b001000:
+    	printf("DECODE: addi!\n");
+
+    	controls->ALUSrc = 1;
+    	controls->RegWrite = 1;
+    	controls->ALUOp = 0b000;
+		break;
+
+    // lui
+    case 0b001111:
+    	printf("DECODE: lui!\n");
+
+    	controls->ALUSrc = 1;
+    	controls->RegWrite = 1;
+    	controls->ALUOp = 0b110;
+    	break;
+
+    // slti
+    case 0b001010:
+    	printf("DECODE: slti!\n");
+
+    	controls->ALUSrc = 1;
+    	controls->RegWrite = 1;
+    	controls->ALUOp = 0b010;
+    	break;
+
+    // sltiu
+    case 0b001011:
+    	printf("DECODE: sltiu!\n");
+
+    	controls->ALUSrc = 1;
+    	controls->RegWrite = 1;
+    	controls->ALUOp = 0b011;
+    	break;
+
+    // jump
+    case 0b000010:
+    	printf("DECODE: jump!\n");
+
+    	controls->Jump = 1;
+    	controls->ALUOp = 0b000;
+    	break;
+
+    // Return -1 if a halt occurs.
+    // Something like if the instruction is invalid
+    default:
+        printf("DECODE INVALID!\n");
+        return -1;
+    }
+
+    // Return a 0 if halt does NOT occur.
+    return 0;
 }
 
 /* Read Register */
@@ -182,7 +299,7 @@ int instruction_decode(unsigned op,struct_controls *controls)
 void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigned *data2)
 {
     /*
-        Index into Reg at r1 and r2 and write the read 
+        Index into Reg at r1 and r2 and write the read
         values into data 1 and data 2 respectively.
     */
     Reg[r1] = *data1;
