@@ -177,6 +177,14 @@ void instruction_partition(unsigned instruction, unsigned *op, unsigned *r1,unsi
 /* 15 Points */
 int instruction_decode(unsigned op,struct_controls *controls)
 {
+    /*
+        TODO Maybe - the components of the controls struct are characters so
+        when we're setting a component of controls equal to something it has
+        to be a character. For example, look at the ALUOp codes in ALU function.
+        They are '0' ... '7'. I think this applies to everything here.
+    */
+    printf("Potential TODO above in code!\n");
+
     printf("DECODE FUNCTION: %d\n", op);
 
 	// Set all controls to 0 by default, so I don't have to set everything later
@@ -382,7 +390,25 @@ return 0;
 /* 10 Points */
 int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsigned *memdata,unsigned *Mem)
 {
+    /*
+        Chris and Isabel
+        We were under the following understandings when writing this:
+            - MemWrite or MemRead is '1' (unless they are both '0')
+            - if both MemWrite or MemRead is '0' we do nothing
+    */
+    if(MemWrite == '1' || MemRead == '1') { //checks if we're doing anything here
+        if(ALUresult % 4 == 0 || ALUresult < 0 || ALUresult > 0xFFFF - 8) { //word alligned? address valid?
+            if(MemWrite == '1') { //writing to memory
+                Mem[ALUresult >> 2] = data2;
+            } else { //reading from memory
+                *memdata = Mem[ALUresult >> 2];
+            }
+        } else { //ALUresult does not point to the beginning of a word
+            return 1;
+        }  
+    }
 
+    return 0;
 }
 
 
