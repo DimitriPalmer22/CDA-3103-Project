@@ -394,21 +394,22 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
         Chris and Isabel
         We were under the following understandings when writing this:
             - MemWrite or MemRead is '1' (unless they are both '0')
+            - It is not possible for both MemWrite and MemRead to be '1'
             - if both MemWrite or MemRead is '0' we do nothing
     */
     if(MemWrite == '1' || MemRead == '1') { //checks if we're doing anything here
-        if(ALUresult % 4 == 0 || ALUresult < 0 || ALUresult > 0xFFFF - 8) { //word alligned? address valid?
+        if(ALUresult % 4 == 0 && ALUresult >= 0 && (ALUresult >> 2) <= (16384 - 1)) { //word alligned? address valid?
             if(MemWrite == '1') { //writing to memory
                 Mem[ALUresult >> 2] = data2;
             } else { //reading from memory
                 *memdata = Mem[ALUresult >> 2];
             }
-        } else { //ALUresult does not point to the beginning of a word
+        } else { //ALUresult isn't a valid address
             return 1;
         }
     }
 
-    return 0;
+    return 0; //no halt
 }
 
 
