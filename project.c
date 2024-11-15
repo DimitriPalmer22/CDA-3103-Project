@@ -483,7 +483,7 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 	// Set the register value
 	Reg[registerIndex] = value;
 
-	printf("In WriteRegister. {%d & %d}. {%d}\n", r2, r3, *Reg);
+	printf("In WriteRegister. {%d & %d}. {%d & %d}\n", r2, r3, memdata, ALUresult);
 	printf("Write %d to Reg[%d]!\n", value, registerIndex);
 }
 
