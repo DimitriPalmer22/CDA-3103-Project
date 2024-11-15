@@ -405,7 +405,7 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
             }
         } else { //ALUresult does not point to the beginning of a word
             return 1;
-        }  
+        }
     }
 
     return 0;
@@ -416,7 +416,75 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
 /* 10 Points */
 void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,char RegWrite,char RegDst,char MemtoReg,unsigned *Reg)
 {
+	/*
+	 * Dimitri
+	 *
+	 * As far as I know, this function is supposed to write a value
+	 * into a register either from memory from the output of the ALU.
+	 *
+	 * r2 and r3 are the possible indices of the register we are writing to
+	 *
+	 * memdata is a value that is currently stored in memory
+	 * ALUresult is the value that is being outputted from the ALU
+	 *
+	 * RegWrite, RegDst, and MemtoReg are flags set by instruction_decode
+	 *
+	 * Reg is the array of register values (32 total)
+	 *
+	 */
 
+	// Depending on the flags, we
+	// - determine which value is being written to the register
+	// - determine which register is being written to
+
+	// If the RegWrite flag is not set, then do not do anything
+	if (RegWrite == 0)
+		return;
+
+	// Determine which register index we are using
+	unsigned registerIndex = r2;
+
+	// Determine which value is being stored into the register
+	unsigned value = memdata;
+
+	// The value is coming from memory
+	// Load word
+	if (MemtoReg == 1)
+	{
+		registerIndex = r2;
+		value = memdata;
+	}
+
+	// The value is coming from the ALU result
+	else if (MemtoReg == 0)
+	{
+		value = ALUresult;
+
+		// Change the register index based on the RegDst flag
+
+		// if RegDst == 1, then the instruction is r-type
+		// so, we need to write to register 3
+		if (RegDst == 1)
+			registerIndex = r3;
+
+		// if RegDst == 0, then the instruction is one of those immediate instructions
+		// So, we need to write to register 2
+		else
+			registerIndex = r2;
+	}
+
+	// If the register index is 0, return
+	// We cannot write to register index 0 since it is $zero
+	// Idk if the program will ever even ask us to write to $zero,
+	// but this is here just in case
+	if (registerIndex == 0)
+		return;
+
+	// Set the register value
+	Reg[registerIndex] = value;
+
+	printf("In WriteRegister. {%d & %d}. {%d}\n", r2, r3, *Reg);
+	printf("Write %d to Reg[%d]!\n", value, registerIndex);
 }
 
 /* PC update */
