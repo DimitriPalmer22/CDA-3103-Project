@@ -393,9 +393,9 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
     /*
         Chris and Isabel
         We were under the following understandings when writing this:
-            - MemWrite or MemRead is '1' (unless they are both '0')
+            - MemWrite xor MemRead is '1' (unless they are both '0')
             - It is not possible for both MemWrite and MemRead to be '1'
-            - if both MemWrite or MemRead is '0' we do nothing
+            - if both MemWrite and MemRead are '0', we do nothing
     */
     if(MemWrite == '1' || MemRead == '1') { //checks if we're doing anything here
         if(ALUresult % 4 == 0 && ALUresult >= 0 && (ALUresult >> 2) <= (16384 - 1)) { //word alligned? address valid?
