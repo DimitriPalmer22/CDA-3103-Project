@@ -26,15 +26,15 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero) {
 			break;
 		case '2': //(A < B)?
 			if(A >> 31 == 1 && B >> 31 == 0) //A is -, B is +
-				ALUresult = 1;
+				*ALUresult = 1;
 			else if(A >> 31 == 0 && B >> 31 == 1) //A is +, B is -
-				ALUresult = 0;
+				*ALUresult = 0;
 			else if(A >> 31 == 1 && B >> 31 == 1) //A is -, B is -
 				//if A has a greater magnitude then it's smaller
-				ALUresult = A > B;
+				*ALUresult = A > B;
 			else //A is +, B is +
 				//if A has a smaller magnitude then it's smaller
-				ALUresult = A < B;
+				*ALUresult = A < B;
 			break;
 		case '3': //(A < B)? (A and B are unsigned integers)
 			*ALUresult = A < B;
@@ -60,6 +60,7 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero) {
 /* 10 Points */
 int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
 {
+    printf("running instruction fetch\n");
     // Check word alignment
     if (PC%4 == 0)
     {
