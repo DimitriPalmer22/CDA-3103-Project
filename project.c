@@ -66,11 +66,7 @@ int instruction_fetch(unsigned PC,unsigned *Mem,unsigned *instruction)
     {
         // Shift
         unsigned tmp = PC >> 2;
-        // Check if Mem contains a value
-        if (Mem[tmp] == NULL)
-        {
-            return 1;
-        }
+        
         *instruction = Mem[tmp];
         return 0;
     }
@@ -503,7 +499,7 @@ void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char 
 
     // Check if a jump needs to be made, 1 is yes 0 is no (if yes, shift jsec left 2 and use upper 4 bits
     if (Jump == 1){
-        *PC = (jsec << 2) | (*PC & 0xf0000000)
+        *PC = (jsec << 2) | (*PC & 0xf0000000);
     }
 }
 
