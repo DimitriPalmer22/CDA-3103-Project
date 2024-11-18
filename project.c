@@ -492,6 +492,17 @@ void write_register(unsigned r2,unsigned r3,unsigned memdata,unsigned ALUresult,
 /* 10 Points */
 void PC_update(unsigned jsec,unsigned extended_value,char Branch,char Jump,char Zero,unsigned *PC)
 {
+    // PC moves to next bit instruction
+    *PC = *PC +4;
 
+     //Check if a branch should be made
+    if(Zero == 1 & Branch == 1){
+        *PC = *PC + (extended_value << 2);
+    }
+
+    // Check if a jump needs to be made, 1 is yes 0 is no (if yes, shift jsec left 2 and use upper 4 bits
+    if (Jump == 1){
+        *PC = (jsec << 2) | (*PC & 0xf0000000)
+    }
 }
 
