@@ -7,53 +7,53 @@ void ALU(unsigned A,unsigned B,char ALUControl,unsigned *ALUresult,char *Zero) {
 	/*
 		Christopher and Isabel
 		A and B are in 2s complement unless specified as unsigned
-		ALUControl is represented with chars '0' - '7'
+		ALUControl is represented with chars 0 - 7
 	*/
 
 	//use to ensure carry out bit is ignored
 	const unsigned int bitMask32 = 0b11111111111111111111111111111111;
 
 	switch(ALUControl) {
-		case '0': //add
+		case 0: //add
 			*ALUresult = A + B;
 			*ALUresult = *ALUresult & bitMask32;
 			break;
-		case '1': //subtract
+		case 1: //subtract
 			if(B != 0)
 				B = ~B + 1;
 			*ALUresult = A + B;
 			*ALUresult = *ALUresult & bitMask32;
 			break;
-		case '2': //(A < B)?
+		case 2: //(A < B)?
 			if(A >> 31 == 1 && B >> 31 == 0) //A is -, B is +
 				*ALUresult = 1;
 			else if(A >> 31 == 0 && B >> 31 == 1) //A is +, B is -
 				*ALUresult = 0;
 			else if(A >> 31 == 1 && B >> 31 == 1) //A is -, B is -
-				//if A has a greater magnitude then it's smaller
+				//if A has a greater magnitude then its smaller
 				*ALUresult = A > B;
 			else //A is +, B is +
-				//if A has a smaller magnitude then it's smaller
+				//if A has a smaller magnitude then its smaller
 				*ALUresult = A < B;
 			break;
-		case '3': //(A < B)? (A and B are unsigned integers)
+		case 3: //(A < B)? (A and B are unsigned integers)
 			*ALUresult = A < B;
 			break;
-		case '4': //(A AND B)
+		case 4: //(A AND B)
 			*ALUresult = A & B;
 			break;
-		case '5': //(A OR B)
+		case 5: //(A OR B)
 			*ALUresult = A | B;
 			break;
-		case '6': //(Shift B left by 16 bits)
+		case 6: //(Shift B left by 16 bits)
 			*ALUresult = B << 16;
 			break;
-		case '7': //(NOT A)
+		case 7: //(NOT A)
 			*ALUresult = ~A;
 			break;
 	}
 
-    *ALUresult == 0 ? (*Zero = '1') : (*Zero = '0'); //set Zero flag to appropriate value
+    *ALUresult == 0 ? (*Zero = 1) : (*Zero = 0); //set Zero flag to appropriate value
 }
 
 /* instruction fetch */
@@ -176,15 +176,15 @@ int instruction_decode(unsigned op,struct_controls *controls)
 {
     /*
         TODO Maybe - the components of the controls struct are characters so
-        when we're setting a component of controls equal to something it has
+        when were setting a component of controls equal to something it has
         to be a character. For example, look at the ALUOp codes in ALU function.
-        They are '0' ... '7'. I think this applies to everything here.
+        They are 0 ... 7. I think this applies to everything here.
     */
     printf("Potential TODO above in code!\n");
 
     printf("DECODE FUNCTION: %d\n", op);
 
-	// Set all controls to 0 by default, so I don't have to set everything later
+	// Set all controls to 0 by default, so I dont have to set everything later
 	controls->RegDst = 0;
 	controls->ALUSrc = 0;
 	controls->MemtoReg = 0;
@@ -307,8 +307,14 @@ void read_register(unsigned r1,unsigned r2,unsigned *Reg,unsigned *data1,unsigne
         Index into Reg at r1 and r2 and write the read
         values into data 1 and data 2 respectively.
     */
-    Reg[r1] = *data1;
-    Reg[r2] = *data2;
+
+	// Reg[r1] = *data1;
+ //    Reg[r2] = *data2;
+
+	*data1 = Reg[r1];
+	*data2 = Reg[r2];
+
+	printf("Read Register: Reg[%d] = %d Reg[%d] = %d\n", r1, *data1, r2, *data2);
 }
 
 
@@ -390,18 +396,18 @@ int rw_memory(unsigned ALUresult,unsigned data2,char MemWrite,char MemRead,unsig
     /*
         Chris and Isabel
         We were under the following understandings when writing this:
-            - MemWrite xor MemRead is '1' (unless they are both '0')
-            - It is not possible for both MemWrite and MemRead to be '1'
-            - if both MemWrite and MemRead are '0', we do nothing
+            - MemWrite xor MemRead is 1 (unless they are both 0)
+            - It is not possible for both MemWrite and MemRead to be 1
+            - if both MemWrite and MemRead are 0, we do nothing
     */
-    if(MemWrite == '1' || MemRead == '1') { //checks if we're doing anything here
+    if(MemWrite == 1 || MemRead == 1) { //checks if were doing anything here
         if(ALUresult % 4 == 0 && ALUresult >= 0 && (ALUresult >> 2) <= (16384 - 1)) { //word alligned? address valid?
-            if(MemWrite == '1') { //writing to memory
+            if(MemWrite == 1) { //writing to memory
                 Mem[ALUresult >> 2] = data2;
             } else { //reading from memory
                 *memdata = Mem[ALUresult >> 2];
             }
-        } else { //ALUresult isn't a valid address
+        } else { //ALUresult isnt a valid address
             return 1;
         }
     }
