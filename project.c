@@ -1,10 +1,13 @@
-#include "spimcore.h"
+//Andrew Chambers, Christopher Otto, Dimitri Palmer, Isabel Asconape, Jacob Smith
+//John Aedo
+//COP3103C Project Group 65
+//Project
 
+#include "spimcore.h"
 
 /* ALU */
 /* 10 Points */
-void ALU(unsigned A, unsigned B, char ALUControl, unsigned* ALUresult, char* Zero)
-{
+void ALU(unsigned A, unsigned B, char ALUControl, unsigned* ALUresult, char* Zero) {
     /*
         Christopher and Isabel
         A and B are in 2s complement unless specified as unsigned
@@ -63,9 +66,7 @@ void ALU(unsigned A, unsigned B, char ALUControl, unsigned* ALUresult, char* Zer
 
 /* instruction fetch */
 /* 10 Points */
-int instruction_fetch(unsigned PC, unsigned* Mem, unsigned* instruction)
-{
-    
+int instruction_fetch(unsigned PC, unsigned* Mem, unsigned* instruction) {
     if (PC % 4 == 0) { //Check word alignment
         // Shift
         unsigned tmp = PC >> 2;
@@ -142,8 +143,7 @@ void instruction_partition(unsigned instruction, unsigned* op, unsigned* r1, uns
 
 /* instruction decode */
 /* 15 Points */
-int instruction_decode(unsigned op, struct_controls* controls)
-{
+int instruction_decode(unsigned op, struct_controls* controls) {
     // Set all controls to 0 by default, so I dont have to set everything later
     controls->RegDst = 0;
     controls->ALUSrc = 0;
@@ -254,7 +254,6 @@ void read_register(unsigned r1, unsigned r2, unsigned* Reg, unsigned* data1, uns
 /* Sign Extend */
 /* 10 Points */
 void sign_extend(unsigned offset, unsigned* extended_value) {
-
     //bit masks
     const unsigned int bitMask32 = 0b11111111111111111111111111111111;
 
