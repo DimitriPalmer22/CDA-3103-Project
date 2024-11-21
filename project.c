@@ -229,10 +229,10 @@ int instruction_decode(unsigned op, struct_controls* controls) {
         controls->ALUOp = 0b010;
         break;
 
-    // Return -1 if a halt occurs.
+    // Return 1 if a halt occurs.
     // Something like if the instruction is invalid
     default:
-        return -1;
+        return 1;
     }
 
     // Return a 0 if halt does NOT occur.
